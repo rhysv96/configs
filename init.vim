@@ -13,6 +13,7 @@ Plug 'preservim/nerdcommenter'
 
 " surround
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 
 " git
 Plug 'tpope/vim-fugitive'

@@ -1,0 +1,2 @@
+:PlugInstall
+:UpdateRemotePlugins
