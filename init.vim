@@ -38,7 +38,7 @@ call plug#end()
 let g:deoplete#enable_at_startup = 1
 
 " relative + absolute line numbers
-:set number relativenumber
+set number relativenumber
 
 " search highlighting
 set nohlsearch
@@ -61,5 +61,9 @@ autocmd Filetype php setlocal tabstop=4 shiftwidth=4
 autocmd Filetype ts setlocal tabstop=4 shiftwidth=4
 
 " ts jumping
-:nnoremap <Leader>j :TSDef<CR>
-:nnoremap <Leader>J :TSDefPreview<CR>
+nnoremap <Leader>j :TSDef<CR>
+nnoremap <Leader>J :TSDefPreview<CR>
+
+" highlight trailing whitespace
+highlight TrailingWhitespace ctermbg=red guibg=red
+match TrailingWhitespace /\s\+$/
