@@ -61,9 +61,12 @@ autocmd Filetype php setlocal tabstop=4 shiftwidth=4
 autocmd Filetype ts setlocal tabstop=4 shiftwidth=4
 
 " ts jumping
-nnoremap <Leader>j :TSDef<CR>
-nnoremap <Leader>J :TSDefPreview<CR>
+autocmd Filetype ts nnoremap <Leader>j :TSDef<CR>
+autocmd Filetype ts nnoremap <Leader>J :TSDefPreview<CR>
 
 " highlight trailing whitespace
 highlight TrailingWhitespace ctermbg=red guibg=red
 match TrailingWhitespace /\s\+$/
+
+" Leader-P to open FZF
+nnoremap <Leader>p :FZF<cr>
