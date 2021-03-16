@@ -64,6 +64,9 @@ autocmd Filetype ts setlocal tabstop=4 shiftwidth=4
 autocmd Filetype ts nnoremap <Leader>j :TSDef<CR>
 autocmd Filetype ts nnoremap <Leader>J :TSDefPreview<CR>
 
+" php jumping
+autocmd Filetype php nnoremap <Leader>j :PhpactorGotoDefinition<CR>
+
 " highlight trailing whitespace
 highlight TrailingWhitespace ctermbg=red guibg=red
 match TrailingWhitespace /\s\+$/
