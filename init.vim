@@ -39,6 +39,9 @@ Plug 'cakebaker/scss-syntax.vim'
 " ale (linting engine)
 Plug 'dense-analysis/ale'
 
+" DBGP debugging (Xdebug, nodejs debugger..)
+Plug 'vim-vdebug/vdebug'
+
 " Install plugins
 call plug#end()
 
@@ -65,10 +68,10 @@ nnoremap <leader>N :NERDTreeFind<CR>
 " spaces
 set expandtab
 autocmd Filetype yaml setlocal tabstop=2 shiftwidth=2
-autocmd Filetype js setlocal tabstop=4 shiftwidth=4
+autocmd Filetype js setlocal tabstop=2 shiftwidth=2
+autocmd Filetype ts setlocal tabstop=2 shiftwidth=2
 autocmd Filetype vue setlocal tabstop=2 shiftwidth=2
 autocmd Filetype php setlocal tabstop=4 shiftwidth=4
-autocmd Filetype ts setlocal tabstop=4 shiftwidth=4
 
 " ts jumping
 autocmd Filetype ts nnoremap <Leader>j :TSDef<CR>
@@ -96,3 +99,7 @@ let g:ale_fixers = {
   \ '*': ['remove_trailing_lines', 'trim_whitespace'],
   \ 'php': ['phpcbf', 'php_cs_fixer', 'remove_trailing_lines', 'trim_whitespace'],
   \}
+
+" / searching options
+" ignores case, unless a capital letter is used in the search
+set smartcase ignorecase
