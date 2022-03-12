@@ -19,28 +19,28 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
-" deoplete
-Plug 'Shougo/deoplete.nvim'
-Plug 'Shougo/denite.nvim'
-
 " typescript
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-
-" php
-Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'w0rp/ale'
+Plug 'peitalin/vim-jsx-typescript'
 
 " vue
 Plug 'posva/vim-vue'
 
-" scss
-Plug 'cakebaker/scss-syntax.vim'
-
-" ale (linting engine)
-Plug 'dense-analysis/ale'
-
 " DBGP debugging (Xdebug, nodejs debugger..)
 Plug 'vim-vdebug/vdebug'
+
+" Sessioning, for restoring tmux
+Plug 'tpope/vim-obsession'
+
+" replace with register
+Plug 'vim-scripts/ReplaceWithRegister'
+
+" airline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+Plug 'github/copilot.vim'
 
 " Install plugins
 call plug#end()
@@ -69,6 +69,7 @@ nnoremap <leader>N :NERDTreeFind<CR>
 set expandtab
 autocmd Filetype yaml setlocal tabstop=2 shiftwidth=2
 autocmd Filetype js setlocal tabstop=2 shiftwidth=2
+autocmd Filetype spec.js setlocal tabstop=2 shiftwidth=2
 autocmd Filetype ts setlocal tabstop=2 shiftwidth=2
 autocmd Filetype vue setlocal tabstop=2 shiftwidth=2
 autocmd Filetype php setlocal tabstop=4 shiftwidth=4
@@ -103,3 +104,31 @@ let g:ale_fixers = {
 " / searching options
 " ignores case, unless a capital letter is used in the search
 set smartcase ignorecase
+
+let g:vdebug_options = {
+  \ "port" : 9001,
+  \ "server" : '',
+  \ "timeout" : 20,
+  \ "on_close" : 'detach',
+  \ "break_on_open" : 0,
+  \ "ide_key" : '',
+  \ "path_maps" : {
+  \     '/usr/src/app': getcwd()
+  \ },
+  \ "debug_window_level" : 0,
+  \ "debug_file_level" : 0,
+  \ "debug_file" : "",
+  \ "watch_window_style" : 'compact',
+  \ "marker_default"     : '⬦',
+  \ "marker_closed_tree" : '▸',
+  \ "marker_open_tree" : '▾'
+  \}
+
+" Mouse support
+set mouse=a
+
+" close tabs to the right
+command -nargs=0 Tabr :.+1,$tabdo :q
+
+" grab current file
+command -nargs=0 Ycurr :let @+=expand("%")
