@@ -21,8 +21,6 @@ Plug 'airblade/vim-gitgutter'
 
 " typescript
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'w0rp/ale'
-Plug 'peitalin/vim-jsx-typescript'
 
 " vue
 Plug 'posva/vim-vue'

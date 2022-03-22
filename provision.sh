@@ -10,7 +10,9 @@ fi
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
-nvm install v16 > /dev/null
+if ! node -v | grep v16 > /dev/null; then
+        nvm install v16 > /dev/null
+fi
 
 # python 3
 if ! python3_loc="$(type -p python3)" || [[ -z $python3_loc ]]; then
@@ -21,17 +23,23 @@ if ! python3_loc="$(type -p python3)" || [[ -z $python3_loc ]]; then
 	sudo apt install python3.8 -y > /dev/null
 fi
 
-# python 2
-if ! python2_loc="$(type -p python2)" || [[ -z $python2_loc ]]; then
-        echo "Installing python 2"
-	sudo apt install python2 -y > /dev/null
-fi
-
-# tmux
-if ! tmux_loc="$(type -p tmux)" || [[ -z $tmux_loc ]]; then
-        echo "Installing tmux"
-	sudo apt install tmux -y > /dev/null
-fi
+apt_plugins=(
+        # "command package-name"
+        "python2 python2"
+        "tmux tmux"
+        "mosh-server mosh"
+        "nvim neovim"
+)
+for row in "${apt_plugins[@]}"; do
+        split=($row)
+        command="${split[0]}"
+        package="${split[1]}"
+        echo "$command"
+        if ! command_loc="$(type -p $command)" || [[ -z $command_loc ]]; then
+                echo "Installing $package"
+                sudo apt install $package -y > /dev/null
+        fi
+done
 
 # github cli
 if ! gh_loc="$(type -p gh)" || [[ -z $gh_loc ]]; then
@@ -54,6 +62,7 @@ fi
 
 # docker compose
 if [ ! -f ~/.docker/cli-plugins/docker-compose ]; then
+        echo "Installing docker compose"
         mkdir -p ~/.docker/cli-plugins/ > /dev/null
         curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose > /dev/null
         chmod +x ~/.docker/cli-plugins/docker-compose > /dev/null
@@ -62,23 +71,18 @@ fi
 
 # rustup
 if ! rustup_loc="$(type -p rustup)" || [[ -z $rustup_loc ]]; then
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        echo "Installing rust"
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y > /dev/null
         source $HOME/.cargo/env
 fi
 
-# mosh
-if ! mosh_loc="$(type -p mosh-server)" || [[ -z $mosh_loc ]]; then
-        sudo apt install mosh -y >/dev/null
+# mosh ports
+if ! sudo iptables --list | grep 60000:61000 > /dev/null; then
+        echo "Opening UDP port range 60000:61000 for mosh"
+        sudo iptables -I INPUT 1 -p udp --dport 60000:61000 -j ACCEPT
 fi
 
-
-
-# neovim and it's configurations
-if ! nvim_loc="$(type -p nvim)" || [[ -z $nvim_loc ]]; then
-        echo "Installing neovim"
-	sudo apt install neovim -y > /dev/null
-fi
-
+# neovim config
 if [ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim" ]; then
         echo "Installing vim-plug"
 	sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
@@ -86,7 +90,6 @@ if [ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim" ]; 
 fi
 
 if [ -f "./configs/init.vim" ]; then
-        echo "Transferring vim config"
 	rm -f ~/.config/nvim/init.vim > /dev/null
 	mkdir -p ~/.config > /dev/null
 	mkdir -p ~/.config/nvim > /dev/null
@@ -96,9 +99,61 @@ fi
 # nvim coc
 mkdir -p ~/.config/coc/extensions
 cd ~/.config/coc/extensions
-if [ ! -f package.json ]
-then
-  echo '{"dependencies":{}}'> package.json
+if [ ! -f package.json ]; then
+        echo '{"dependencies":{}}' > package.json
 fi
-npm install coc-tsserver coc-rls --global-style --ignore-scripts --no-bin-links --no-package-lock --only=prod > /dev/null
+coc_extensions=(
+        coc-tsserver
+        coc-rls
+)
+installed_coc_extensions=$(npm ls)
+for extension in "${coc_extensions[@]}"; do
+        if ! echo $installed_coc_extensions | grep $extension > /dev/null; then
+                npm install $extension --global-style --ignore-scripts --no-bin-links --no-package-lock --only=prod > /dev/null
+        fi
+done
+
 cd ~
+
+# npm global installs
+npm_packages=(
+        neovim
+        typescript
+)
+installed_npm_packages=$(npm ls -g)
+for extension in "${npm_packages[@]}"; do
+        if ! echo $installed_npm_packages | grep $package > /dev/null; then
+                echo "Installing package $package via npm global"
+                npm install -g $package > /dev/null
+        fi
+done
+
+# code-server
+if ! code_server_loc="$(type -p code-server)" || [[ -z $code_server_loc ]]; then
+        echo "Installing code-server"
+        curl -fsSL https://code-server.dev/install.sh | sh
+fi
+
+sudo systemctl enable --now code-server@$USER
+
+extensions=(
+        vscodevim.vim
+        esbenp.prettier-vscode
+        shardulm94.trailing-spaces
+        octref.vetur
+        Equinusocio.vsc-community-material-theme
+        bmewburn.vscode-intelephense-client
+)
+installed_vscode_extensions=$(code-server --list-extensions)
+for extension in "${extensions[@]}"; do
+        if ! echo $installed_vscode_extensions | grep $extension > /dev/null; then
+                echo "Installing vscode extension $extension"
+                code-server --install-extension $extension > /dev/null
+        fi
+done
+
+# flutter
+if ! flutter_loc="$(type -p flutter)" || [[ -z $flutter_loc ]]; then
+        sudo snap install flutter --classic
+fi
+
