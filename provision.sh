@@ -34,7 +34,6 @@ for row in "${apt_plugins[@]}"; do
         split=($row)
         command="${split[0]}"
         package="${split[1]}"
-        echo "$command"
         if ! command_loc="$(type -p $command)" || [[ -z $command_loc ]]; then
                 echo "Installing $package"
                 sudo apt install $package -y > /dev/null
@@ -137,7 +136,8 @@ fi
 sudo systemctl enable --now code-server@$USER
 
 extensions=(
-        vscodevim.vim
+        # vscodevim.vim doesnt work, using below temporarily
+        9j.amvim
         esbenp.prettier-vscode
         shardulm94.trailing-spaces
         octref.vetur
