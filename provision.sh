@@ -157,3 +157,15 @@ if ! flutter_loc="$(type -p flutter)" || [[ -z $flutter_loc ]]; then
         sudo snap install flutter --classic
 fi
 
+# increase filesystem watchers
+if [ ! -f /etc/sysctl.d/10-user-watches.conf ]; then
+        echo "fs.inotify.max_user_watches = 100000" > /etc/sysctl.d/10-user-watches.conf
+        sudo sysctl -p
+fi
+
+# fish shell
+if ! flutter_loc="$(type -p fish)" || [[ -z $flutter_loc ]]; then
+        sudo apt-add-repository ppa:fish-shell/release-3 -y > /dev/null
+        sudo apt update -y > /dev/null
+        sudo apt install fish -y > /dev/null
+fi

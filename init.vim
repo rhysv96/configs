@@ -40,6 +40,12 @@ Plug 'vim-airline/vim-airline-themes'
 
 Plug 'github/copilot.vim'
 
+" prettier
+" post install (yarn install | npm install) then load plugin only for editing supported files
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'npm install --frozen-lockfile --production',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
+
 " Install plugins
 call plug#end()
 
@@ -85,7 +91,6 @@ match TrailingWhitespace /\s\+$/
 
 " FZF shortcuts
 nnoremap <Leader>p :FZF<cr>
-nnoremap <Leader>r :History<cr>
 
 " vue preprocessors
 let g:vue_pre_processors = [ 'scss' ]
@@ -130,3 +135,6 @@ command -nargs=0 Tabr :.+1,$tabdo :q
 
 " grab current file
 command -nargs=0 Ycurr :let @+=expand("%")
+
+" coc actions
+nnoremap <leader>r :CocAction<CR>
